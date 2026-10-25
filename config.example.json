@@ -1,0 +1,22 @@
+{
+  "lte_host": "192.168.1.20",
+  "lte_mac": "aa:bb:cc:dd:ee:ff",
+  "pi_address": "192.168.1.10",
+  "ssh_user": "root",
+  "ssh_key_path": "/home/pi/.ssh/id_ed25519_lte",
+  "state_dir": "/home/pi/.local/state/lte-pro-access",
+  "socat_device_binary": "/home/pi/.local/share/lte-pro-access/socat-mips",
+  "socat_pi_binary": "/usr/bin/socat",
+  "qmi_port": 18222,
+  "at_relay": {
+    "port": 18223,
+    "device": "/dev/ttyUSB2",
+    "idle_seconds": 60
+  },
+  "check_interval_seconds": 30,
+  "unifi": {
+    "host": "192.168.1.1",
+    "username": "REPLACE_WITH_UNIFI_USERNAME",
+    "password": "REPLACE_WITH_UNIFI_PASSWORD"
+  }
+}

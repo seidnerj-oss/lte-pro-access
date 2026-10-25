@@ -1,0 +1,15 @@
+[Unit]
+Description=LTE Pro access supervisor (SSH enable, socat relays)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/projects/lte-pro-access
+ExecStart=/home/pi/.local/bin/uv run python -m lte_pro_access --config /home/pi/.config/lte-pro-access/config.json
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
