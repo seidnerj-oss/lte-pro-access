@@ -16,14 +16,19 @@ async def spawn_local(argv: list[str]) -> LocalProcess:
     )
 
 
+# enable_ssh reaches the device through pyunifiapi's WebRTC debug terminal, which needs its cloud extra.
+REQUIRED_MODULES = ("pyunifiapi", "libdatachannel")
+
+
 def require_pyunifiapi() -> None:
-    """Fail at startup, not on the first LTE reboot, when the lazily imported pyunifiapi is missing."""
-    if importlib.util.find_spec("pyunifiapi") is None:
-        raise ModuleNotFoundError(
-            "pyunifiapi is not installed, so SSH cannot be re-enabled after an LTE reboot. Install it (see the "
-            "README Dependencies section) and restart.",
-            name="pyunifiapi",
-        )
+    """Fail at startup, not on the first LTE reboot, when the lazily imported pyunifiapi[cloud] is missing."""
+    for name in REQUIRED_MODULES:
+        if importlib.util.find_spec(name) is None:
+            raise ModuleNotFoundError(
+                f"{name} is not installed, so SSH cannot be re-enabled after an LTE reboot. Install "
+                "pyunifiapi[cloud] (see the README Dependencies section) and restart.",
+                name=name,
+            )
 
 
 def create_supervisor(cfg: Config) -> Supervisor:

@@ -46,7 +46,15 @@ def test_present_pyunifiapi_passes(monkeypatch):
 
     monkeypatch.setattr(importlib.util, "find_spec", find_spec)
     service_mod.require_pyunifiapi()
-    assert seen == ["pyunifiapi"]
+    assert seen == ["pyunifiapi", "libdatachannel"]
+
+
+def test_missing_cloud_extra_raises_a_clear_error(monkeypatch):
+    monkeypatch.setattr(importlib.util, "find_spec", lambda name: None if name == "libdatachannel" else object())
+    with pytest.raises(ModuleNotFoundError) as exc:
+        service_mod.require_pyunifiapi()
+    assert exc.value.name == "libdatachannel"
+    assert "pyunifiapi[cloud]" in str(exc.value)
 
 
 def test_create_supervisor_wires_the_real_dependencies(monkeypatch, config_path):

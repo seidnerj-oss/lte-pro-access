@@ -1,6 +1,6 @@
 [project]
 name = "lte-pro-access"
-version = "0.1.0"
+version = "0.1.1"
 description = "Keeps SSH to a UniFi LTE Backup Pro enabled and supervises socat relays to it"
 readme = "README.md"
 license = "MIT"

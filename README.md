@@ -33,10 +33,10 @@ Only `/tmp/socat` may be placed on the device. Nothing else is installed there.
 
 ## Dependencies
 
-`pyunifiapi>=0.2.0` is required, and the service exits at startup with an error if it is missing. It is not yet on PyPI, so install it from the GitHub tag until it is published:
+`pyunifiapi[cloud]>=0.2.0` is required (the `cloud` extra brings the WebRTC library that SSH enabling uses), and the service exits at startup with an error if it is missing. It is not yet on PyPI, so install it from the GitHub tag until it is published:
 
 ```
-uv pip install "pyunifiapi @ git+https://github.com/seidnerj-oss/pyunifiapi@v0.2.0"
+uv pip install "pyunifiapi[cloud] @ git+https://github.com/seidnerj-oss/pyunifiapi@v0.2.0"
 ```
 
 Run this after `uv sync --inexact`. A plain `uv sync` removes packages that are not in the lock file.
@@ -62,7 +62,7 @@ The binary is socat 1.7.3.1 (GPL-2.0, with the OpenSSL exception) from the OpenW
 git clone <repo-url> /home/pi/projects/lte-pro-access
 cd /home/pi/projects/lte-pro-access
 uv sync --inexact
-uv pip install "pyunifiapi @ git+https://github.com/seidnerj-oss/pyunifiapi@v0.2.0"
+uv pip install "pyunifiapi[cloud] @ git+https://github.com/seidnerj-oss/pyunifiapi@v0.2.0"
 
 mkdir -p /home/pi/.config/lte-pro-access /home/pi/.local/state/lte-pro-access
 install -m 600 config.example.json /home/pi/.config/lte-pro-access/config.json
