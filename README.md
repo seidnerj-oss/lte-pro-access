@@ -79,7 +79,7 @@ journalctl -u lte-pro-access -f
 
 ```
 sudo systemctl disable --now lte-pro-access
-pgrep -a socat   # a Pi-side relay can outlive a SIGTERM; stop it if it is still listed
+pgrep -a socat   # should list nothing on the Pi: stopping the unit stops its relay
 ```
 
 ## Dependent services

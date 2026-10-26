@@ -1,0 +1,11 @@
+# Extends the default ruleset and skips files that only hold hashes.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Files that are always safe to scan past"
+paths = [
+    '''\.secrets\.baseline$''',
+    '''uv\.lock$''',
+]
