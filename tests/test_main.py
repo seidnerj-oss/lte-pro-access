@@ -140,9 +140,11 @@ def test_public_api():
             "TICK_TIMEOUT_SECONDS",
             "AtRelayConfig",
             "Config",
+            "SocatFetchError",
             "Supervisor",
             "TickResult",
             "create_supervisor",
+            "fetch_socat",
             "run_forever",
         ]
     )

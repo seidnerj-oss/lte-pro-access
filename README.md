@@ -24,7 +24,7 @@ Only `/tmp/socat` may be placed on the device. Nothing else is installed there.
 
 - Config lives at `/home/pi/.config/lte-pro-access/config.json`. Keep it mode 600: it holds the UniFi credentials.
 - `state_dir` (required) is a writable directory. The supervisor keeps the pinned device SSH host key there (`lte_host_key.pub`, mode 600).
-- `ssh_key_path` is the private key the Pi uses to log in to the device. `socat_device_binary` is the MIPS socat binary that is hashed and uploaded to the device as `/tmp/socat` (any socat 1.7.x build for mips_24kc musl works, for example the OpenWrt `socat` package). `socat_pi_binary` is the socat the Pi itself runs for its relay (`/usr/bin/socat`). They are different architectures, so the two paths must differ; the config is rejected when they are equal.
+- `ssh_key_path` is the private key the Pi uses to log in to the device. `socat_device_binary` is the MIPS socat binary that is hashed and uploaded to the device as `/tmp/socat` (see [Getting the MIPS socat](#getting-the-mips-socat); any socat 1.7.x build for mips_24kc musl works). `socat_pi_binary` is the socat the Pi itself runs for its relay (`/usr/bin/socat`). They are different architectures, so the two paths must differ; the config is rejected when they are equal.
 - The device host key is pinned per boot cycle (trust on first use). A different key is accepted only on the first connection after the supervisor re-enabled SSH following a refused connection (a reboot), and only when the UniFi controller confirms dropbear was started. Any other key change is refused, logged at WARNING, and the tick fails without running commands.
 - Resetting the host key pin: if the key changed without this service restarting dropbear, every tick fails with a host key error until the pin is cleared. Run `rm <state_dir>/lte_host_key.pub`, then restart the service (`sudo systemctl restart lte-pro-access`). Never start dropbear by hand while this service runs: the service owns it, and a hand-started dropbear changes the host key without the service seeing a refusal.
 - `at_relay` is required: an object with `port`, `device` and `idle_seconds`, or `null` when only the QMI relay is needed.
@@ -40,6 +40,21 @@ uv pip install "pyunifiapi @ git+https://github.com/seidnerj-oss/pyunifiapi@v0.2
 ```
 
 Run this after `uv sync --inexact`. A plain `uv sync` removes packages that are not in the lock file.
+
+## Getting the MIPS socat
+
+`fetch-socat` downloads the MIPS socat that the supervisor uploads to the device, so you do not need to build one:
+
+```
+uv run python -m lte_pro_access fetch-socat --destination /home/pi/.local/share/lte-pro-access/socat-mips
+```
+
+Then set `socat_device_binary` in the config to that path. The command prints the path on success, creates missing parent directories, writes the file atomically with mode 755 and leaves a destination that already holds the pinned binary untouched. Embedders call `lte_pro_access.fetch_socat(destination: Path) -> Path` instead; it raises `SocatFetchError` on a hash mismatch or an unexpected package layout, and `OSError` (including `urllib.error.URLError`) on network or filesystem failures.
+
+The binary is socat 1.7.3.1 (GPL-2.0, with the OpenSSL exception) from the OpenWrt 17.01.6 `mips_24kc` package feed (package `socat_1.7.3.1-1_mips_24kc.ipk`, build recipe in `feeds/packages/net/socat` of the [OpenWrt packages feed](https://github.com/openwrt/packages), source at [dest-unreach.org/socat](http://www.dest-unreach.org/socat/)). It is downloaded from `downloads.openwrt.org` when you run the command, not bundled with this project, which stays MIT. The URL and two SHA-256 hashes are pinned in `src/lte_pro_access/socat_fetch.py`, and both are verified before anything is written:
+
+- the `.ipk`: `57f96162c901467bde1aa1f57c695fffe591e4f924c3760831b83d21dd718e7b`
+- the extracted `usr/bin/socat`: `ec8bb6f7b197eb086de29c48457d803347b4252ba2e9eee0e0197b7d871e39a5`
 
 ## Install on the Pi
 
